@@ -15,12 +15,13 @@ const SERVER_URL = process.env.REACT_APP_SERVER_URL || 'http://localhost:5000';
 
 function App() {
   const [code, setCode] = useState('');
-  const [explanation, setExplanation] = useState('');
   const [audioUrl, setAudioUrl] = useState('');
   const [visualData, setVisualData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [theme, setTheme] = useState('light'); // 'light' or 'dark'
+  const [outputType, setOutputType] = useState('explanation');
+  const [outputContent, setOutputContent] = useState('');
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -49,7 +50,8 @@ function App() {
   const handleExplainCode = async () => {
     setLoading(true);
     setError('');
-    setExplanation('');
+    setOutputType('explanation');
+    setOutputContent('');
     setAudioUrl('');
     setVisualData(null);
 
@@ -59,7 +61,7 @@ function App() {
         { code },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setExplanation(response.data.explanation);
+      setOutputContent(response.data.explanation);
       setAudioUrl(response.data.audioUrl);
       setVisualData(response.data.visualData);
     } catch (err) {
@@ -74,7 +76,8 @@ function App() {
   const handleFileUpload = async (file) => {
     setLoading(true);
     setError('');
-    setExplanation('');
+    setOutputType('explanation');
+    setOutputContent('');
     setAudioUrl('');
     setVisualData(null);
 
@@ -88,7 +91,7 @@ function App() {
         { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
       );
       setCode(response.data.code); // Set code from uploaded file
-      setExplanation(response.data.explanation);
+      setOutputContent(response.data.explanation);
       setAudioUrl(response.data.audioUrl);
       setVisualData(response.data.visualData);
     } catch (err) {
@@ -103,13 +106,15 @@ function App() {
   const handleRefactorCode = async () => {
     setLoading(true);
     setError('');
+    setOutputType('refactor');
+    setOutputContent('');
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(`${SERVER_URL}/api/explain/refactor`,
         { code },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert('Refactoring Suggestion:\n' + response.data.refactoredCode); // Using alert for simplicity as per previous instructions
+      setOutputContent(response.data.refactoredCode);
     } catch (err) {
       console.error('Error refactoring code:', err);
       setError(err.response?.data?.message || 'Failed to get refactoring suggestions.');
@@ -122,13 +127,15 @@ function App() {
   const handleDebugCode = async () => {
     setLoading(true);
     setError('');
+    setOutputType('debug');
+    setOutputContent('');
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(`${SERVER_URL}/api/explain/debug`,
         { code },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert('Debugging Assistant:\n' + response.data.debugInfo); // Using alert for simplicity as per previous instructions
+      setOutputContent(response.data.debugInfo);
     } catch (err) {
       console.error('Error debugging code:', err);
       setError(err.response?.data?.message || 'Failed to get debugging assistance.');
@@ -170,7 +177,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Auth type="login" />} />
           <Route path="/register" element={<Auth type="register" />} />
-          <Route path="/history" element={user ? <History setCode={setCode} setExplanation={setExplanation} setAudioUrl={setAudioUrl} setVisualData={setVisualData} /> : <p className="text-center text-red-500">Please log in to view history.</p>} />
+          <Route path="/history" element={user ? <History setCode={setCode} setAudioUrl={setAudioUrl} setVisualData={setVisualData} /> : <p className="text-center text-red-500">Please log in to view history.</p>} />
           <Route path="/" element={
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <motion.div
@@ -188,7 +195,7 @@ function App() {
                       disabled={loading || !code.trim()}
                       className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {loading ? 'Explaining...' : 'Explain Code'}
+                      {loading && outputType === 'explanation' ? 'Explaining...' : 'Explain Code'}
                     </button>
                     <UploadBox onFileUpload={handleFileUpload} disabled={loading} />
                     <button
@@ -196,14 +203,14 @@ function App() {
                       disabled={loading || !code.trim()}
                       className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {loading ? 'Refactoring...' : 'Refactor Code'}
+                      {loading && outputType === 'refactor' ? 'Refactoring...' : 'Refactor Code'}
                     </button>
                     <button
                       onClick={handleDebugCode}
                       disabled={loading || !code.trim()}
                       className="px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {loading ? 'Debugging...' : 'Debug Code'}
+                      {loading && outputType === 'debug' ? 'Debugging...' : 'Debug Code'}
                     </button>
                   </div>
                   {error && <p className="text-red-500 mt-4">{error}</p>}
@@ -216,11 +223,9 @@ function App() {
                 transition={{ duration: 0.5, delay: 0.1 }}
                 className="lg:col-span-1 flex flex-col space-y-6"
               >
-                
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism flex-grow">
-                  <h2 className="text-2xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Explanation</h2>
-                  <ExplanationBox explanation={explanation} loading={loading} />
-                  {audioUrl && <AudioPlayer audioUrl={audioUrl} />}
+                  <ExplanationBox explanation={outputContent} loading={loading} type={outputType} />
+                  {audioUrl && outputType === 'explanation' && <AudioPlayer audioUrl={audioUrl} />}
                 </div>
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism flex-grow">
                   <h2 className="text-2xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Dry Run Visualization</h2>

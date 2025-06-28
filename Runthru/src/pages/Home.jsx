@@ -14,6 +14,8 @@ const HomePage = () => {
   const [visualData, setVisualData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [outputType, setOutputType] = useState('explanation');
+  const [outputContent, setOutputContent] = useState('');
 
   useEffect(() => {
     // Check for replay data from history page
@@ -31,14 +33,14 @@ const HomePage = () => {
   const handleExplainCode = async () => {
     setLoading(true);
     setError('');
-    setExplanation('');
+    setOutputType('explanation');
+    setOutputContent('');
     setAudioUrl('');
     setVisualData(null);
-
     try {
       const token = localStorage.getItem('token');
       const response = await explainService.explainCode(code, token);
-      setExplanation(response.explanation);
+      setOutputContent(response.explanation);
       setAudioUrl(response.audioUrl);
       setVisualData(response.visualData);
     } catch (err) {
@@ -52,15 +54,15 @@ const HomePage = () => {
   const handleFileUpload = async (file) => {
     setLoading(true);
     setError('');
-    setExplanation('');
+    setOutputType('explanation');
+    setOutputContent('');
     setAudioUrl('');
     setVisualData(null);
-
     try {
       const token = localStorage.getItem('token');
       const response = await explainService.uploadCodeFile(file, token);
-      setCode(response.code); // Set code from uploaded file
-      setExplanation(response.explanation);
+      setCode(response.code);
+      setOutputContent(response.explanation);
       setAudioUrl(response.audioUrl);
       setVisualData(response.visualData);
     } catch (err) {
@@ -74,10 +76,12 @@ const HomePage = () => {
   const handleRefactorCode = async () => {
     setLoading(true);
     setError('');
+    setOutputType('refactor');
+    setOutputContent('');
     try {
       const token = localStorage.getItem('token');
       const response = await explainService.refactorCode(code, token);
-      alert('Refactoring Suggestion:\n' + response.refactoredCode);
+      setOutputContent(response.refactoredCode);
     } catch (err) {
       console.error('Error refactoring code:', err);
       setError(err.message || 'Failed to get refactoring suggestions.');
@@ -89,10 +93,12 @@ const HomePage = () => {
   const handleDebugCode = async () => {
     setLoading(true);
     setError('');
+    setOutputType('debug');
+    setOutputContent('');
     try {
       const token = localStorage.getItem('token');
       const response = await explainService.debugCode(code, token);
-      alert('Debugging Assistant:\n' + response.debugInfo);
+      setOutputContent(response.debugInfo);
     } catch (err) {
       console.error('Error debugging code:', err);
       setError(err.message || 'Failed to get debugging assistance.');
@@ -147,9 +153,8 @@ const HomePage = () => {
         className="lg:col-span-1 flex flex-col space-y-6"
       >
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism flex-grow">
-          <h2 className="text-2xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Explanation</h2>
-          <ExplanationBox explanation={explanation} loading={loading} />
-          {audioUrl && <AudioPlayer audioUrl={audioUrl} />}
+          <ExplanationBox explanation={outputContent} loading={loading} type={outputType} />
+          {audioUrl && outputType === 'explanation' && <AudioPlayer audioUrl={audioUrl} />}
         </div>
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism flex-grow">
           <h2 className="text-2xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Dry Run Visualization</h2>

@@ -29,10 +29,30 @@ exports.getRefactoringSuggestions = async (code, language) => {
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `
-You're an AI developer assistant. Suggest improvements for the following ${language} code:
-- Improve readability
-- Optimize performance if needed
-- Suggest clean coding practices
+You are a competitive programming expert.
+
+Analyze the following ${language} code and follow this output format:
+
+----------------------------------------------------
+🧠 Original Time Complexity: O(?)
+🧠 Original Space Complexity: O(?)
+
+✅ Key Observations (Short points only):
+- Focus on real inefficiencies, not styling
+- DO NOT mention style improvements like avoiding 'using namespace std;'
+- Skip obvious/subjective suggestions unless they improve performance
+
+⚠️ IF AND ONLY IF the code's logic or complexity can be **significantly improved**:
+- Show the improved code
+- Provide new time & space complexity
+
+❌ If the logic and complexity are already optimal:
+- Do NOT return new code
+- Just return complexity + observations
+
+DO NOT guess complexity if not clear — just say "Depends on input size or logic
+also dont print the prompt in the output".
+----------------------------------------------------
 
 Code:
 ${code}
@@ -47,17 +67,25 @@ exports.getDebuggingAssistance = async (code, language) => {
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `
-You're an AI debugger.
+You're a helpful AI coding teacher and debugger.
 
-Analyze the following ${language} code:
-- Identify any syntax or logic errors
-- Explain what the bugs are
-- Suggest corrections briefly
+Your task:
+1. First, check if the following ${language} code has any syntax or logical errors.
+2. If there is an error:
+   - Print the corrected code first (in plain text without backticks).
+   - Explain what was wrong in 2–3 bullet points (short and simple).
+3. If there is no error:
+   - Say "✅ No errors found."
+   - Suggest 1–2 short improvements or best practices.
 
 Code:
 ${code}
-`;
 
+Important:
+- Do NOT wrap the output in markdown backticks or code blocks.
+- Keep it short and clean, like a teacher explaining to a student.
+- Use newlines to separate sections clearly.
+`;
   const result = await model.generateContent(prompt);
   return result.response.text();
 };
