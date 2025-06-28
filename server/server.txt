@@ -1,0 +1,44 @@
+├── server/ # Node.js/Express backend application
+
+│ ├── routes/ # Defines API endpoints
+
+│ │ ├── explain.js
+
+│ │ ├── auth.js
+
+│ │ └── history.js
+
+│ ├── controllers/ # Contains logic for handling requests and interacting with models/services
+
+│ │ ├── explainController.js
+
+│ │ ├── authController.js
+
+│ │ └── historyController.js
+
+│ ├── models/ # Mongoose schemas for MongoDB collections
+
+│ │ ├── User.js
+
+│ │ └── History.js
+
+│ ├── utils/ # Helper functions for external API integrations and other utilities
+
+│ │ ├── gptHelper.js
+
+│ │ ├── ttsHelper.js
+
+│ │ └── tokenizer.js
+
+│ └── app.js # Main Express application setup, middleware, and route registration
+
+├──.env # Environment variables for sensitive data (API keys, database credentials)
+
+├── README.md # Project documentation
+
+└── package.json  
+
+
+ChatGPT said:
+
+Analysis errored
