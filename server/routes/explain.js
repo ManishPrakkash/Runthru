@@ -35,4 +35,9 @@ router.post('/refactor', authMiddleware, explainController.refactorCode);
 // @access  Private
 router.post('/debug', authMiddleware, explainController.debugCode);
 
+// ...existing code...
+// @route   POST /api/explain/dryrun
+// @desc    Get dry run steps and audio for code
+// @access  Private
+router.post('/dryrun', authMiddleware, explainController.dryRunCode);
 module.exports = router;

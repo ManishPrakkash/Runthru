@@ -54,3 +54,11 @@ export const debugCode = async (code, token) => {
     throw error;
   }
 };
+export const dryRunCode = async (code, token) => {
+  try {
+    const response = await axios.post(`${SERVER_URL}/api/explain/dryrun`, { code }, getAuthHeaders(token));
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -37,7 +37,7 @@ Analyze the following ${language} code and follow this output format:
 🧠 Original Time Complexity: O(?)
 🧠 Original Space Complexity: O(?)
 
-✅ Key Observations (Short points only):
+✅ Key Observations (Short points):
 - Focus on real inefficiencies, not styling
 - DO NOT mention style improvements like avoiding 'using namespace std;'
 - Skip obvious/subjective suggestions unless they improve performance

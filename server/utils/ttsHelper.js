@@ -1,3 +1,20 @@
+const { spawn } = require('child_process');
+const path = require('path');
+
+exports.generateAudio = (text, outputPath) => {
+  return new Promise((resolve, reject) => {
+    const scriptPath = path.join(__dirname, 'generate_audio.py');
+    const process = spawn('python', [scriptPath, text, outputPath]);
+    process.on('close', (code) => {
+      if (code === 0) resolve();
+      else reject(new Error('TTS generation failed'));
+    });
+  });
+};
+
+
+
+
 // // server/utils/ttsHelper.js
 // const { exec } = require('child_process');
 // const path = require('path');
@@ -41,3 +58,4 @@
 //     });
 //   });
 // };
+

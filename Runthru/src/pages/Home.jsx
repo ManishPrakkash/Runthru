@@ -107,58 +107,117 @@ const HomePage = () => {
     }
   };
 
+  const handleDryRun = async () => {
+  setLoading(true);
+  setError('');
+  setOutputType('dryrun');
+  setOutputContent('');
+  setAudioUrl('');
+  setVisualData(null);
+  try {
+    const token = localStorage.getItem('token');
+    const response = await explainService.dryRunCode(code, token);
+    setVisualData(response.visualData);
+    setAudioUrl(response.audioUrl);
+  } catch (err) {
+    setError(err.message || 'Failed to perform dry run.');
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Left: Code Input and Actions */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="lg:col-span-1 flex flex-col space-y-6"
       >
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism flex flex-col h-full">
           <h2 className="text-2xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Code Input</h2>
           <CodeEditor value={code} onChange={setCode} />
-          <div className="mt-4 flex flex-wrap gap-4">
-            <button
-              onClick={handleExplainCode}
-              disabled={loading || !code.trim()}
-              className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Explaining...' : 'Explain Code'}
-            </button>
-            <UploadBox onFileUpload={handleFileUpload} disabled={loading} />
-            <button
-              onClick={handleRefactorCode}
-              disabled={loading || !code.trim()}
-              className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Refactoring...' : 'Refactor Code'}
-            </button>
-            <button
-              onClick={handleDebugCode}
-              disabled={loading || !code.trim()}
-              className="px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Debugging...' : 'Debug Code'}
-            </button>
+          <div className="mt-4 flex flex-col gap-4">
+            <div className="flex flex-wrap gap-4 overflow-x-auto" style={{maxWidth: '100%'}}>
+              <button
+                onClick={handleExplainCode}
+                disabled={loading || !code.trim()}
+                className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Explaining...' : 'Explain Code'}
+              </button>
+              <UploadBox onFileUpload={handleFileUpload} disabled={loading} />
+              <button
+                onClick={handleRefactorCode}
+                disabled={loading || !code.trim()}
+                className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Refactoring...' : 'Refactor Code'}
+              </button>
+              <button
+                onClick={handleDebugCode}
+                disabled={loading || !code.trim()}
+                className="px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Debugging...' : 'Debug Code'}
+              </button>
+              {/* Dry Run button should always be visible. If not, check CSS or parent container size. */}
+              <button
+                onClick={handleDryRun}
+                disabled={loading || !code.trim()}
+                className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{minWidth: '120px'}}
+              >
+                {loading ? 'Dry Running...' : 'Dry Run'}
+              </button>
+            </div>
+            {/* Dry Run Step Controls */}
+            {outputType === 'dryrun' && visualData && (
+              <div className="flex gap-2 mt-2">
+                <button
+                  className="px-4 py-2 bg-gray-300 dark:bg-gray-700 rounded hover:bg-gray-400 dark:hover:bg-gray-600"
+                  onClick={() => setVisualData(v => ({ ...v, currentStepIndex: Math.max(0, (v.currentStepIndex || 0) - 1) }))}
+                >Previous</button>
+                <button
+                  className="px-4 py-2 bg-gray-300 dark:bg-gray-700 rounded hover:bg-gray-400 dark:hover:bg-gray-600"
+                  onClick={() => setVisualData(v => ({ ...v, currentStepIndex: Math.min(v.steps.length - 1, (v.currentStepIndex || 0) + 1) }))}
+                >Next</button>
+              </div>
+            )}
           </div>
           {error && <p className="text-red-500 mt-4">{error}</p>}
         </div>
       </motion.div>
 
+      {/* Middle: Dry Run Visualization */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
         className="lg:col-span-1 flex flex-col space-y-6"
       >
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism flex-grow">
-          <ExplanationBox explanation={outputContent} loading={loading} type={outputType} />
-          {audioUrl && outputType === 'explanation' && <AudioPlayer audioUrl={audioUrl} />}
-        </div>
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism flex-grow">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism flex-grow flex flex-col items-center justify-center">
           <h2 className="text-2xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Dry Run Visualization</h2>
           <Visualizer visualData={visualData} />
+          {/* Optionally, play audio for dryrun */}
+          {audioUrl && outputType === 'dryrun' && <AudioPlayer audioUrl={audioUrl} />}
+        </div>
+      </motion.div>
+
+      {/* Right: Explanation Output */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="lg:col-span-1 flex flex-col space-y-6"
+      >
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism flex-grow">
+          <h2 className="text-2xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Explanation Output</h2>
+          <ExplanationBox explanation={outputContent} loading={loading} type={outputType} />
+          {audioUrl && outputType === 'explanation' && <AudioPlayer audioUrl={audioUrl} />}
         </div>
       </motion.div>
     </div>
