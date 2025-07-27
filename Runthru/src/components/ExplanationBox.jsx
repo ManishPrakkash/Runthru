@@ -7,6 +7,8 @@ const ExplanationBox = ({ explanation, loading, type = 'explanation' }) => {
         return 'Debugging Analysis';
       case 'refactor':
         return 'Refactoring Suggestions';
+      case 'dryrun':
+        return 'Dry Run Analysis';
       default:
         return 'Explanation';
     }
@@ -18,6 +20,8 @@ const ExplanationBox = ({ explanation, loading, type = 'explanation' }) => {
         return 'Analyzing code for issues...';
       case 'refactor':
         return 'Generating refactoring suggestions...';
+      case 'dryrun':
+        return 'Generating step-by-step dry run...';
       default:
         return 'Generating explanation...';
     }
@@ -29,6 +33,8 @@ const ExplanationBox = ({ explanation, loading, type = 'explanation' }) => {
         return 'Debugging analysis will appear here.';
       case 'refactor':
         return 'Refactoring suggestions will appear here.';
+      case 'dryrun':
+        return 'Step-by-step dry run analysis will appear here.';
       default:
         return 'Your step-by-step explanation will appear here.';
     }
