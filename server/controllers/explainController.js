@@ -213,43 +213,62 @@ exports.debugCode = async (req, res) => {
 };
 
 exports.dryRunCode = async (req, res) => {
-  try {
-    const { code } = req.body;
-    // 1. Analyze code and generate dry run steps (for demo, handle binary search)
-    // In production, use a parser or AI to generalize
-    const dryRunData = getDryRunStepsForBinarySearch(code); // Implement this function
+  const { code } = req.body;
 
-    // 2. Generate voice explanation for each step
-    const explanations = dryRunData.steps.map((step, idx) => `Step ${idx + 1}: ${step.description}`);
+  let userId;
+  try {
+    userId = getUserId(req);
+  } catch (authErr) {
+    return res.status(401).json({ message: authErr.message });
+  }
+
+  if (!code) {
+    return res.status(400).json({ message: 'Code snippet is required for dry run.' });
+  }
+
+  try {
+    const language = getLanguageFromCode(code);
+    
+    // Analyze code and generate dry run steps
+    const dryRunData = await gptHelper.generateDryRunSteps(code, language);
+    
+    // Generate comprehensive explanation for the entire dry run
+    const stepExplanations = dryRunData.steps.map((step, idx) => 
+      `Step ${idx + 1}: ${step.audioDescription}`
+    );
+    
+    const fullExplanation = `Dry Run Analysis: ${dryRunData.title}. ${dryRunData.description}. ${stepExplanations.join('. ')}. Final output: ${dryRunData.output}. Time complexity: ${dryRunData.complexity}.`;
+    
+    // Generate audio for the full explanation
     const audioFileName = `dryrun_${Date.now()}.mp3`;
     const audioFilePath = path.join(__dirname, '../public/audio', audioFileName);
+    
+    try {
+      await ttsHelper.synthesizeSpeechToFile(fullExplanation, audioFilePath);
+    } catch (ttsError) {
+      console.error('⚠️ TTS failed for dry run:', ttsError.message);
+    }
 
-    // Join all explanations for a single audio file (or generate per step if you want)
-    const fullText = explanations.join('. ');
-    await ttsHelper.generateAudio(fullText, audioFilePath);
+    // Save to history
+    const historyEntry = new History({
+      userId,
+      code,
+      language,
+      explanation: fullExplanation,
+      audioUrl: `/audio/${audioFileName}`,
+      visualData: dryRunData
+    });
+    await historyEntry.save();
 
-    // 3. Respond with dry run data and audio URL
     res.json({
       visualData: dryRunData,
       audioUrl: `/audio/${audioFileName}`,
+      explanation: fullExplanation
     });
+
   } catch (err) {
-    console.error('Dry run error:', err);
-    res.status(500).json({ error: 'Failed to generate dry run.' });
+    console.error('❌ Error in dryRunCode:', err);
+    res.status(500).json({ message: 'Failed to generate dry run. ' + err.message });
   }
 };
 
-// Example: Only for binary search demo
-function getDryRunStepsForBinarySearch(code) {
-  // In production, parse code or use AI. Here, return a static example.
-  return {
-    type: 'arrayTraversal',
-    array: [1, 3, 5, 7, 9, 11, 13],
-    steps: [
-      { index: 3, description: 'Check middle element 7' },
-      { index: 1, description: 'Move left to 3' },
-      { index: 2, description: 'Move right to 5' },
-    ],
-    currentStepIndex: 0,
-  };
-}
