@@ -1,0 +1,5 @@
+{
+  "text": "* The code uses a queue to store a list of animal names.  Think of a queue like a line at a store – the first one in is the first one out.\n\n* It adds \"Dog\", \"Cat\", and \"Elephant\" to the queue.\n\n* It then prints the queue (Dog Cat Elephant).\n\n* It removes the first element (\"Dog\") from the queue.\n\n* Finally, it prints the queue again (Cat Elephant).\n\n\n**Example:**\n\nInput:  The code adds and removes elements from the queue as described above.\n\nOutput:\nInitial queue : Dog Cat Elephant \nFinal queue : Cat Elephant\n",
+  "timestamp": "2025-07-12T18:07:08.926Z",
+  "duration": 52
+}

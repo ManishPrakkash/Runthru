@@ -1,0 +1,5 @@
+{
+  "text": "* The code defines a function called `arraySum` that takes a list of numbers (`arr`) as input.\n* It creates a variable `total` and sets it to zero.\n* It goes through each number in the input list.\n* In each iteration, it adds the current number to the `total`.\n* Finally, it returns the `total`, which is the sum of all numbers in the list.\n\nExample:\n\nInput: `[1, 2, 3, 4, 5]`\n\nOutput: `15`\n",
+  "timestamp": "2025-07-12T18:06:33.056Z",
+  "duration": 40
+}

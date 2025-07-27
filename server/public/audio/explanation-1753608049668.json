@@ -1,0 +1,5 @@
+{
+  "text": "* The code draws a pattern of stars (*) that form a triangle.\n* It first asks the user for the number of rows in the triangle.\n* The outer loop (`i`) controls the number of rows.\n* The inner loops print spaces then stars to create the triangular shape.  The number of spaces decreases, while the number of stars increases with each row.\n* The pattern is printed to the console.\n\n\n**Example:**\n\nIf the input `n` is 5, the output will be:\n\n```\n    *\n   ***\n  *****\n *******\n*********\n```\n",
+  "timestamp": "2025-07-27T09:20:49.668Z",
+  "duration": 49
+}

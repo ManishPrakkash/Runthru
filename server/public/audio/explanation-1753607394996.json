@@ -1,0 +1,5 @@
+{
+  "text": "* The code searches for a `target` number within a sorted list (`arr`).\n\n* It repeatedly divides the search area in half.\n\n* If the middle value is the target, it returns the middle value's position.\n\n* If the target is larger, it searches the right half; if smaller, the left half.\n\n* If the target isn't found, it returns -1.\n\n\n**Example:**\n\n`arr` = [2, 5, 7, 8, 11, 12], `target` = 11\n\nOutput: 4 (because 11 is at the 4th position, index starts from 0)\n",
+  "timestamp": "2025-07-27T09:09:54.997Z",
+  "duration": 46
+}

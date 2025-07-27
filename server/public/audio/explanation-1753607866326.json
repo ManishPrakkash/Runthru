@@ -1,0 +1,5 @@
+{
+  "text": "* The code draws a pyramid pattern using asterisks (*) and spaces.\n\n* The user inputs the number of rows for the pyramid.\n\n* The outer loop (`i`) controls the number of rows.\n\n* The inner loops print spaces to center the pyramid and then asterisks to form each row, increasing the number of asterisks per row.\n\n* The number of asterisks in each row increases by two as you go down.\n\n\n**Example:**\n\nInput:  `5` (number of rows)\n\nOutput:\n\n```\n    *\n   ***\n  *****\n *******\n*********\n```\n",
+  "timestamp": "2025-07-27T09:17:46.326Z",
+  "duration": 49
+}

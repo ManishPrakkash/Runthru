@@ -1,0 +1,5 @@
+{
+  "text": "* The function searches for a `target` number within a sorted list (`arr`).\n\n* It starts by looking at the middle element of the list.\n\n* If the middle element is the target, it returns the index (position) of the target.\n\n* If the target is bigger, it searches the right half; if smaller, it searches the left half.  It repeats this process until it finds the target or runs out of places to look.\n\n* If the target is not found, it returns -1.\n\n\n**Example:**\n\nInput:  `binary_search([2, 5, 7, 8, 11, 12], 11)`\nOutput: `4` (because 11 is at index 4)\n",
+  "timestamp": "2025-07-27T09:10:51.596Z",
+  "duration": 55
+}

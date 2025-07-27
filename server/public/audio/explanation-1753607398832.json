@@ -1,0 +1,5 @@
+{
+  "text": "* The function searches for a `target` number within a sorted list called `arr`.\n\n* It starts by checking the middle element of the list.\n\n* If the middle element is the target, its position is returned.\n\n* If the target is bigger, it searches the right half; if smaller, it searches the left half.  This is repeated until the target is found or the search space is exhausted.\n\n* If the target is not found, it returns -1.\n\n**Example:**\n\nInput: `binary_search([2, 5, 7, 8, 11, 12], 11)`\n\nOutput: `4` (because 11 is at the 4th position, remember that Python uses 0-based indexing)\n",
+  "timestamp": "2025-07-27T09:09:58.832Z",
+  "duration": 58
+}

@@ -1,0 +1,5 @@
+{
+  "text": "* The function searches for a `target` number within a sorted list `arr`.\n\n* It repeatedly checks the middle element of the list.\n\n* If the middle element is the target, its position is returned.\n\n* If the target is greater, the search continues in the right half; if smaller, in the left half.\n\n* If the target is not found after checking all parts, -1 is returned.\n\n\nExample:\n\nInput: `arr = [2, 5, 7, 8, 11, 12]`, `target = 11`\nOutput: `4` (because 11 is at index 4)\n",
+  "timestamp": "2025-07-27T09:14:48.145Z",
+  "duration": 47
+}
