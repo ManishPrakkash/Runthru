@@ -3,6 +3,46 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 // Load the API key from environment
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+// Retry configuration
+const RETRY_CONFIG = {
+  maxRetries: 3,
+  initialDelayMs: 1000,
+  backoffMultiplier: 2,
+};
+
+// Helper function to retry API calls with exponential backoff
+async function retryWithBackoff(fn, context = '') {
+  let lastError;
+  
+  for (let attempt = 1; attempt <= RETRY_CONFIG.maxRetries; attempt++) {
+    try {
+      console.log(`🔄 API attempt ${attempt}/${RETRY_CONFIG.maxRetries}${context ? ` for ${context}` : ''}`);
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      console.error(`❌ Attempt ${attempt} failed:`, error.message);
+      
+      // Check if error is retryable
+      const isRetryable = 
+        error.message.includes('fetch failed') ||
+        error.message.includes('timeout') ||
+        error.message.includes('503') ||
+        error.message.includes('429'); // Rate limiting
+      
+      if (attempt < RETRY_CONFIG.maxRetries && isRetryable) {
+        const delayMs = RETRY_CONFIG.initialDelayMs * Math.pow(RETRY_CONFIG.backoffMultiplier, attempt - 1);
+        console.log(`⏳ Retrying in ${delayMs}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+      } else if (!isRetryable) {
+        console.error('⚠️ Non-retryable error, failing immediately');
+        break;
+      }
+    }
+  }
+  
+  throw new Error(`API call failed after ${RETRY_CONFIG.maxRetries} attempts: ${lastError?.message}`);
+}
+
 // Clean and user-friendly explanation prompt
 exports.getExplanation = async (code, language) => {
   try {
