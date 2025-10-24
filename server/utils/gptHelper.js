@@ -47,9 +47,9 @@ async function retryWithBackoff(fn, context = '') {
 exports.getExplanation = async (code, language) => {
   try {
     return await retryWithBackoff(async () => {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-  const prompt = `
+      const prompt = `
 You are a helpful AI that explains code to beginners in a simple way.
 
 Explain the following ${language} code with the following rules:
@@ -62,8 +62,8 @@ Code:
 ${code}
 `;
 
-  const result = await model.generateContent(prompt);
-  return result.response.text();
+      const result = await model.generateContent(prompt);
+      return result.response.text();
     }, 'getExplanation');
   } catch (error) {
     console.error('❌ Error in getExplanation:', error.message);
@@ -75,9 +75,9 @@ ${code}
 exports.getRefactoringSuggestions = async (code, language) => {
   try {
     return await retryWithBackoff(async () => {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-  const prompt = `
+      const prompt = `
 You are a competitive programming expert.
 
 Analyze the following ${language} code and follow this output format:
@@ -107,8 +107,8 @@ Code:
 ${code}
 `;
 
-  const result = await model.generateContent(prompt);
-  return result.response.text();
+      const result = await model.generateContent(prompt);
+      return result.response.text();
     }, 'getRefactoringSuggestions');
   } catch (error) {
     console.error('❌ Error in getRefactoringSuggestions:', error.message);
@@ -130,9 +130,9 @@ Could not generate AI refactoring suggestions at this moment. Please try again l
 exports.getDebuggingAssistance = async (code, language) => {
   try {
     return await retryWithBackoff(async () => {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-  const prompt = `
+      const prompt = `
 You're a helpful AI coding teacher and debugger.
 
 Your task:
@@ -152,8 +152,8 @@ Important:
 - Keep it short and clean, like a teacher explaining to a student.
 - Use newlines to separate sections clearly.
 `;
-  const result = await model.generateContent(prompt);
-  return result.response.text();
+      const result = await model.generateContent(prompt);
+      return result.response.text();
     }, 'getDebuggingAssistance');
   } catch (error) {
     console.error('❌ Error in getDebuggingAssistance:', error.message);
@@ -176,9 +176,9 @@ Could not generate AI debugging assistance at this moment. Please try again late
 exports.generateDryRunSteps = async (code, language) => {
   try {
     return await retryWithBackoff(async () => {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-  const prompt = `
+      const prompt = `
 You are an expert programming instructor specializing in algorithm visualization. Analyze the following ${language} code and create a detailed step-by-step dry run visualization.
 
 For the given code, provide a comprehensive analysis with MANY detailed steps in this exact JSON format:
@@ -249,21 +249,21 @@ ${code}
 Important: Return ONLY valid JSON, no additional text or explanations. Ensure the JSON is properly formatted and parseable. Generate MANY detailed steps (8-15 minimum) with realistic variable changes.
 `;
 
-    const result = await model.generateContent(prompt);
-    const response = result.response.text();
-    
-    // Try to parse the JSON response
-    let dryRunData;
-    try {
-      dryRunData = JSON.parse(response);
-    } catch (parseError) {
-      console.error('Failed to parse AI response as JSON:', response);
-      // Fallback to basic visualization
-      return createFallbackDryRun(code);
-    }
+      const result = await model.generateContent(prompt);
+      const response = result.response.text();
+      
+      // Try to parse the JSON response
+      let dryRunData;
+      try {
+        dryRunData = JSON.parse(response);
+      } catch (parseError) {
+        console.error('Failed to parse AI response as JSON:', response);
+        // Fallback to basic visualization
+        return createFallbackDryRun(code);
+      }
 
-    // Validate and enhance the dry run data
-    return enhanceDryRunData(dryRunData, code);
+      // Validate and enhance the dry run data
+      return enhanceDryRunData(dryRunData, code);
     }, 'generateDryRunSteps');
   } catch (error) {
     console.error('❌ Error generating dry run steps:', error.message);
