@@ -5,6 +5,8 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Clean and user-friendly explanation prompt
 exports.getExplanation = async (code, language) => {
+  try {
+    return await retryWithBackoff(async () => {
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `
