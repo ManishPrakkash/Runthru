@@ -73,6 +73,8 @@ ${code}
 
 // Helper function to get AI refactoring suggestions
 exports.getRefactoringSuggestions = async (code, language) => {
+  try {
+    return await retryWithBackoff(async () => {
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `
