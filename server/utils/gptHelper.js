@@ -139,6 +139,22 @@ Important:
 `;
   const result = await model.generateContent(prompt);
   return result.response.text();
+    }, 'getDebuggingAssistance');
+  } catch (error) {
+    console.error('❌ Error in getDebuggingAssistance:', error.message);
+    return `
+⚠️ **Debugging Analysis Unavailable**
+
+Could not generate AI debugging assistance at this moment. Please try again later.
+
+**Manual debugging steps:**
+1. Check syntax for typos and missing semicolons/brackets
+2. Verify variable names and scopes
+3. Trace through logic with sample inputs
+4. Check boundary conditions and edge cases
+5. Test with print statements or debugger
+    `.trim();
+  }
 };
 
 // Enhanced dry run generation for dynamic programming
