@@ -113,6 +113,8 @@ ${code}
 
 // Helper function to get AI debugging assistance
 exports.getDebuggingAssistance = async (code, language) => {
+  try {
+    return await retryWithBackoff(async () => {
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `
@@ -141,6 +143,8 @@ Important:
 
 // Enhanced dry run generation for dynamic programming
 exports.generateDryRunSteps = async (code, language) => {
+  try {
+    return await retryWithBackoff(async () => {
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `
@@ -230,7 +234,7 @@ Important: Return ONLY valid JSON, no additional text or explanations. Ensure th
 
     // Validate and enhance the dry run data
     return enhanceDryRunData(dryRunData, code);
-    
+    }, 'generateDryRunSteps');
   } catch (error) {
     console.error('❌ Error generating dry run steps:', error.message);
     return createFallbackDryRun(code);
