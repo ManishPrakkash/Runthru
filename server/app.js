@@ -28,9 +28,34 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bo
 app.use('/audio', express.static(path.join(__dirname, 'public/audio')));
 
 // Database Connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected successfully'))
-  .catch(err => console.error('MongoDB connection error:', err));
+mongoose.connect(process.env.MONGO_URI, {
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+  maxPoolSize: 10,
+  minPoolSize: 2,
+  retryWrites: true,
+})
+  .then(() => {
+    console.log('✅ MongoDB connected successfully');
+  })
+  .catch(err => {
+    console.error('❌ MongoDB connection error:', err.message);
+    console.error('MONGO_URI:', process.env.MONGO_URI ? 'Set ✅' : 'Not set ❌');
+    process.exit(1); // Exit if DB connection fails
+  });
+
+// MongoDB connection event listeners
+mongoose.connection.on('connected', () => {
+  console.log('✅ Mongoose connected to MongoDB');
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.warn('⚠️  Mongoose disconnected from MongoDB');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('❌ MongoDB connection error:', err);
+});
 
 // API Routes
 app.use('/api/auth', authRoutes);
