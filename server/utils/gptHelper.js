@@ -64,6 +64,11 @@ ${code}
 
   const result = await model.generateContent(prompt);
   return result.response.text();
+    }, 'getExplanation');
+  } catch (error) {
+    console.error('❌ Error in getExplanation:', error.message);
+    return createFallbackExplanation(code);
+  }
 };
 
 // Helper function to get AI refactoring suggestions
