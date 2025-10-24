@@ -109,6 +109,21 @@ ${code}
 
   const result = await model.generateContent(prompt);
   return result.response.text();
+    }, 'getRefactoringSuggestions');
+  } catch (error) {
+    console.error('❌ Error in getRefactoringSuggestions:', error.message);
+    return `
+⚠️ **Refactoring Analysis Unavailable**
+
+Could not generate AI refactoring suggestions at this moment. Please try again later.
+
+**Manual review tips:**
+- Check for nested loops that can be optimized
+- Look for redundant operations
+- Consider alternative data structures
+- Profile the code for bottlenecks
+    `.trim();
+  }
 };
 
 // Helper function to get AI debugging assistance
