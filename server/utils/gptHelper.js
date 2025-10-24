@@ -232,7 +232,7 @@ Important: Return ONLY valid JSON, no additional text or explanations. Ensure th
     return enhanceDryRunData(dryRunData, code);
     
   } catch (error) {
-    console.error('Error generating dry run steps:', error);
+    console.error('❌ Error generating dry run steps:', error.message);
     return createFallbackDryRun(code);
   }
 };
@@ -448,3 +448,34 @@ function createFallbackDryRun(code) {
     currentStepIndex: 0
   };
 }
+
+// Fallback explanation when API fails
+function createFallbackExplanation(code) {
+  const codeLines = code.trim().split('\n').length;
+  return `
+📝 **Code Analysis** (API Unavailable - Basic Analysis)
+
+This code snippet contains approximately ${codeLines} lines.
+
+**What it does:**
+- Defines and processes code logic
+- Handles data structure operations
+- Implements algorithm or function logic
+
+**Key components:**
+- Variable declarations and initialization
+- Control flow statements (loops/conditionals)
+- Data processing operations
+- Return/output statements
+
+💡 **Suggestion:** Try again in a few moments if you need AI-powered detailed explanation.
+
+**To understand better:**
+1. Review variable names and their purposes
+2. Trace through the logic step-by-step
+3. Identify loops and conditionals
+4. Check input/output requirements
+  `.trim();
+}
+
+module.exports.createFallbackExplanation = createFallbackExplanation;
