@@ -26,6 +26,8 @@ const Auth = ({ type }) => {
       
       const response = await axios.post(`${SERVER_URL}${endpoint}`, { username, password });
 
+      console.log('✅ Response received:', response.data);
+
       if (response.data.token) {
         // ✅ Save token to localStorage
         localStorage.setItem('token', response.data.token);
