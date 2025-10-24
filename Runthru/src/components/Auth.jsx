@@ -41,8 +41,14 @@ const Auth = ({ type }) => {
         setError(response.data.message || 'Authentication failed.');
       }
     } catch (err) {
-      console.error('Auth error:', err);
-      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      console.error('❌ Auth error:', err);
+      console.error('Error details:', {
+        message: err.message,
+        status: err.response?.status,
+        data: err.response?.data,
+        statusText: err.response?.statusText
+      });
+      setError(err.response?.data?.message || err.response?.data?.error || err.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
