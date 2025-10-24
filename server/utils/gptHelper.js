@@ -234,7 +234,6 @@ ${code}
 Important: Return ONLY valid JSON, no additional text or explanations. Ensure the JSON is properly formatted and parseable. Generate MANY detailed steps (8-15 minimum) with realistic variable changes.
 `;
 
-  try {
     const result = await model.generateContent(prompt);
     const response = result.response.text();
     
