@@ -280,7 +280,19 @@ exports.dryRunCode = async (req, res) => {
 
   } catch (err) {
     console.error('❌ Error in dryRunCode:', err);
-    res.status(500).json({ message: 'Failed to generate dry run. ' + err.message });
+    
+    // Provide helpful error messages
+    let userMessage = 'Failed to generate dry run.';
+    
+    if (err.message.includes('API') || err.message.includes('fetch')) {
+      userMessage = 'AI visualization service temporarily unavailable. A basic analysis will be provided on retry.';
+    } else if (err.message.includes('timeout')) {
+      userMessage = 'Request timed out. Please try a shorter code snippet.';
+    } else if (err.message.includes('Unauthorized')) {
+      return res.status(401).json({ message: err.message });
+    }
+    
+    res.status(500).json({ message: userMessage, error: err.message });
   }
 };
 
