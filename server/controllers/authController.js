@@ -63,6 +63,11 @@ exports.login = async (req, res) => {
   const { username, password } = req.body;
 
   try {
+    // Validate input
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username and password are required' });
+    }
+
     // Check if user exists
     let user = await User.findOne({ username });
     if (!user) {
@@ -88,7 +93,10 @@ exports.login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '1h' }, // Token expires in 1 hour
       (err, token) => {
-        if (err) throw err;
+        if (err) {
+          console.error('❌ JWT Generation Error:', err);
+          return res.status(500).json({ message: 'Token generation failed', error: err.message });
+        }
         res.json({ message: 'Logged in successfully', token, username: user.username });
       }
     );
