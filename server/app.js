@@ -1,4 +1,4 @@
-require('dotenv').config(); // Load environment variables from .env file
+require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') }); // Load .env from root directory
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
