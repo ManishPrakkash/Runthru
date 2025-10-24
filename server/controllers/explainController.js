@@ -89,7 +89,19 @@ exports.explainCode = async (req, res) => {
 
   } catch (err) {
     console.error('❌ Error in explainCode:', err);
-    res.status(500).json({ message: 'Failed to process code explanation. ' + err.message });
+    
+    // Provide helpful error messages based on error type
+    let userMessage = 'Failed to process code explanation.';
+    
+    if (err.message.includes('API') || err.message.includes('fetch')) {
+      userMessage = 'AI service temporarily unavailable. A basic explanation has been generated instead.';
+    } else if (err.message.includes('timeout')) {
+      userMessage = 'Request timed out. Please try again.';
+    } else if (err.message.includes('Unauthorized')) {
+      return res.status(401).json({ message: err.message });
+    }
+    
+    res.status(500).json({ message: userMessage, error: err.message });
   }
 };
 
