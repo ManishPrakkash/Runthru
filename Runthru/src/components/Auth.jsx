@@ -21,6 +21,9 @@ const Auth = ({ type }) => {
 
     try {
       const endpoint = type === 'login' ? '/api/auth/login' : '/api/auth/register';
+      console.log(`📤 Sending ${type} request to:`, `${SERVER_URL}${endpoint}`);
+      console.log('📝 Data:', { username, password: '****' });
+      
       const response = await axios.post(`${SERVER_URL}${endpoint}`, { username, password });
 
       if (response.data.token) {
