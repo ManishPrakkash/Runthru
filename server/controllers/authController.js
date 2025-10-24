@@ -29,6 +29,7 @@ exports.register = async (req, res) => {
     });
 
     await user.save();
+    console.log('✅ User registered successfully:', username);
 
     // Generate JWT
     const payload = {
@@ -43,7 +44,10 @@ exports.register = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '1h' }, // Token expires in 1 hour
       (err, token) => {
-        if (err) throw err;
+        if (err) {
+          console.error('❌ JWT Generation Error:', err);
+          return res.status(500).json({ message: 'Token generation failed', error: err.message });
+        }
         res.status(201).json({ message: 'User registered successfully', token, username: user.username });
       }
     );
