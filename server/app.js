@@ -1,4 +1,13 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') }); // Load .env from root directory
+// Load environment variables from root .env first, then server/.env (fallback)
+// Already-set env vars are preserved
+try {
+  const dotenv = require('dotenv');
+  const path = require('path');
+  dotenv.config({ path: path.resolve(__dirname, '../.env'), override: false });
+  dotenv.config({ path: path.resolve(__dirname, '.env'), override: false });
+} catch (e) {
+  // dotenv optional
+}
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');

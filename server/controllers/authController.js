@@ -1,3 +1,10 @@
+// Ensure env from root and server .env files are loaded (no override of existing)
+try {
+  const dotenv = require('dotenv');
+  const path = require('path');
+  dotenv.config({ path: path.resolve(__dirname, '../.env'), override: false });
+  dotenv.config({ path: path.resolve(__dirname, '.env'), override: false });
+} catch (e) {}
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');

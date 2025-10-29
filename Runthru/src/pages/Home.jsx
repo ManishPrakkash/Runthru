@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import ExplanationBox from '../components/ExplanationBox';
-import AudioPlayer from '../components/AudioPlayer';
-import Visualizer from '../components/Visualizer';
+// import AudioPlayer from '../components/AudioPlayer';
+// import Visualizer from '../components/Visualizer';
 import UploadBox from '../components/UploadBox';
 import { motion } from 'framer-motion';
 import * as explainService from '../services/explainService'; // Import explainService
@@ -107,24 +107,9 @@ const HomePage = () => {
     }
   };
 
-  const handleDryRun = async () => {
-  setLoading(true);
-  setError('');
-  setOutputType('dryrun');
-  setOutputContent('');
-  setAudioUrl('');
-  setVisualData(null);
-  try {
-    const token = localStorage.getItem('token');
-    const response = await explainService.dryRunCode(code, token);
-    setVisualData(response.visualData);
-    setAudioUrl(response.audioUrl);
-  } catch (err) {
-    setError(err.message || 'Failed to perform dry run.');
-  } finally {
-    setLoading(false);
-  }
-};
+  const handleDryRun = () => {
+    setError('Dry Run feature is temporarily disabled.');
+  };
 
 
 
@@ -165,14 +150,7 @@ const HomePage = () => {
                 {loading ? 'Debugging...' : 'Debug Code'}
               </button>
               {/* Dry Run button should always be visible. If not, check CSS or parent container size. */}
-              <button
-                onClick={handleDryRun}
-                disabled={loading || !code.trim()}
-                className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{minWidth: '120px'}}
-              >
-                {loading ? 'Dry Running...' : 'Dry Run'}
-              </button>
+              {/* Dry Run button temporarily removed */}
             </div>
             {/* Dry Run Step Controls */}
             {outputType === 'dryrun' && visualData && (
@@ -192,20 +170,22 @@ const HomePage = () => {
         </div>
       </motion.div>
 
-      {/* Middle: Dry Run Visualization */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="lg:col-span-1 flex flex-col space-y-6"
-      >
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism flex-grow flex flex-col items-center justify-center">
-          <h2 className="text-2xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Dry Run Visualization</h2>
-          <Visualizer visualData={visualData} />
-          {/* Optionally, play audio for dryrun */}
-          {audioUrl && outputType === 'dryrun' && <AudioPlayer audioUrl={audioUrl} />}
-        </div>
-      </motion.div>
+      {/* Middle: Dry Run Visualization - temporarily hidden */}
+      {false && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="lg:col-span-1 flex flex-col space-y-6"
+        >
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism flex-grow flex flex-col items-center justify-center">
+            <h2 className="text-2xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Dry Run Visualization</h2>
+            <Visualizer visualData={visualData} />
+            {/* Optionally, play audio for dryrun */}
+          {/* {audioUrl && outputType === 'dryrun' && <AudioPlayer audioUrl={audioUrl} />} */}
+          </div>
+        </motion.div>
+      )}
 
       {/* Right: Explanation Output */}
       <motion.div
@@ -217,7 +197,7 @@ const HomePage = () => {
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism flex-grow">
           <h2 className="text-2xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Explanation Output</h2>
           <ExplanationBox explanation={outputContent} loading={loading} type={outputType} />
-          {audioUrl && outputType === 'explanation' && <AudioPlayer audioUrl={audioUrl} />}
+          {/* {audioUrl && outputType === 'explanation' && <AudioPlayer audioUrl={audioUrl} />} */}
         </div>
       </motion.div>
     </div>

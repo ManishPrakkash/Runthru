@@ -1,3 +1,11 @@
+// Ensure env from root and server .env files are loaded here too (if not already)
+try {
+  const dotenv = require('dotenv');
+  const path = require('path');
+  dotenv.config({ path: path.resolve(__dirname, '../.env'), override: false });
+  dotenv.config({ path: path.resolve(__dirname, '.env'), override: false });
+} catch (e) {}
+
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // Load the API key from environment

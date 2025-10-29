@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
           localStorage.removeItem('token');
         }
       } catch (err) {
-        console.error('🔴 Invalid token:', err);
+        console.error('🔴Invalid token:', err);
         localStorage.removeItem('token');
       }
     }

@@ -2,8 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import CodeEditor from './components/CodeEditor';
 import ExplanationBox from './components/ExplanationBox';
-import AudioPlayer from './components/AudioPlayer';
-import Visualizer from './components/Visualizer';
+// import AudioPlayer from './components/AudioPlayer';
+// import Visualizer from './components/Visualizer';
 import Auth from './components/Auth';
 import History from './components/History';
 import UploadBox from './components/UploadBox';
@@ -144,30 +144,9 @@ function App() {
     }
   };
 
-  // Handles dry run request
-  const handleDryRun = async () => {
-    setLoading(true);
-    setError('');
-    setOutputType('dryrun');
-    setOutputContent('');
-    setAudioUrl('');
-    setVisualData(null);
-
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(`${SERVER_URL}/api/explain/dryrun`,
-        { code },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setOutputContent(response.data.explanation);
-      setAudioUrl(response.data.audioUrl);
-      setVisualData(response.data.visualData);
-    } catch (err) {
-      console.error('Error generating dry run:', err);
-      setError(err.response?.data?.message || 'Failed to generate dry run. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+  // Handles dry run request (temporarily disabled)
+  const handleDryRun = () => {
+    setError('Dry Run feature is temporarily disabled.');
   };
 
   // Handles user logout
@@ -238,13 +217,7 @@ function App() {
                     >
                       {loading && outputType === 'debug' ? 'Debugging...' : 'Debug Code'}
                     </button>
-                    <button
-                      onClick={handleDryRun}
-                      disabled={loading || !code.trim()}
-                      className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {loading && outputType === 'dryrun' ? 'Generating Dry Run...' : 'Dry Run'}
-                    </button>
+                    {/* Dry Run button temporarily removed */}
                   </div>
                   {error && <p className="text-red-500 mt-4">{error}</p>}
                 </div>
@@ -258,14 +231,14 @@ function App() {
               >
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism flex-grow">
                   <ExplanationBox explanation={outputContent} loading={loading} type={outputType} />
-                  {outputType === 'explanation' && outputContent && (
+                  {/* {outputType === 'explanation' && outputContent && (
                     <AudioPlayer audioUrl={audioUrl} explanation={outputContent} />
-                  )}
+                  )} */}
                 </div>
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism flex-grow">
+                {/* <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism flex-grow">
                   <h2 className="text-2xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Dry Run Visualization</h2>
                   <Visualizer visualData={visualData} />
-                </div>
+                </div> */}
               </motion.div>
             </div>
           } />

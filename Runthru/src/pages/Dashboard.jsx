@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import ExplanationBox from '../components/ExplanationBox';
-import AudioPlayer from '../components/AudioPlayer';
-import Visualizer from '../components/Visualizer';
+// import AudioPlayer from '../components/AudioPlayer';
+// import Visualizer from '../components/Visualizer';
 import UploadBox from '../components/UploadBox';
 import { motion } from 'framer-motion';
 import * as explainService from '../services/explainService'; // Import explainService
@@ -149,12 +149,12 @@ const Dashboard = () => {
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism flex-grow">
           <h2 className="text-2xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Explanation</h2>
           <ExplanationBox explanation={explanation} loading={loading} />
-          {audioUrl && <AudioPlayer audioUrl={audioUrl} />}
+          {/* {audioUrl && <AudioPlayer audioUrl={audioUrl} />} */}
         </div>
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism flex-grow">
+        {/* <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg glassmorphism flex-grow">
           <h2 className="text-2xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Dry Run Visualization</h2>
           <Visualizer visualData={visualData} />
-        </div>
+        </div> */}
       </motion.div>
     </div>
   );
