@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { motion } from 'framer-motion';
+import * as historyService from '../services/historyService'; // Import historyService
+import { useNavigate } from 'react-router-dom'; // To navigate back to home with data
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || (typeof process !== 'undefined' && process.env && process.env.REACT_APP_SERVER_URL) || 'http://localhost:5000';
-
-const History = ({ setCode, setExplanation, setAudioUrl, setVisualData }) => {
+const HistoryPage = () => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -21,10 +21,8 @@ const History = ({ setCode, setExplanation, setAudioUrl, setVisualData }) => {
 
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`${SERVER_URL}/api/history`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setHistory(response.data);
+        const data = await historyService.fetchUserHistory(token);
+        setHistory(data);
       } catch (err) {
         console.error('Error fetching history:', err);
         setError(err.response?.data?.message || 'Failed to fetch history.');
@@ -37,12 +35,11 @@ const History = ({ setCode, setExplanation, setAudioUrl, setVisualData }) => {
   }, [user]); // Re-fetch when user context changes
 
   const handleReplay = (item) => {
-    setCode(item.code);
-    setExplanation(item.explanation);
-    setAudioUrl(item.audioUrl);
-    setVisualData(item.visualData);
-    // Scroll to top or main explanation section if needed
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // This is a simplified replay. In a real app, you might pass this data
+    // to a global state or directly to the HomePage component if it's a child route.
+    // For now, we'll store it in session storage and navigate.
+    sessionStorage.setItem('replayData', JSON.stringify(item));
+    navigate('/'); // Navigate back to the dashboard
   };
 
   if (loading) {
@@ -102,4 +99,4 @@ const History = ({ setCode, setExplanation, setAudioUrl, setVisualData }) => {
   );
 };
 
-export default History;
+export default HistoryPage;
