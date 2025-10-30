@@ -1,5 +1,9 @@
 import React, { createContext, useState, useEffect } from 'react';
-import {jwtDecode} from 'jwt-decode'; // ✅ Correct usage without destructuring
+// jwt-decode sometimes ships as CommonJS; to be compatible with Vite's
+// ESM handling, import the module as a wildcard and prefer its default if
+// present, otherwise fall back to the module itself.
+import * as jwtDecodeImport from 'jwt-decode';
+const jwtDecode = jwtDecodeImport.default || jwtDecodeImport;
 
 export const AuthContext = createContext();
 
