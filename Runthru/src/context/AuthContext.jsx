@@ -31,12 +31,16 @@ export const AuthProvider = ({ children }) => {
 
   // Login function
   const login = (token, username) => {
+    // Always persist the token so API calls can use it. If decoding fails,
+    // still save the token and fall back to the provided username.
     try {
-      const decoded = jwtDecode(token);
       localStorage.setItem('token', token);
+      const decoded = jwtDecode(token);
       setUser({ username: username || decoded.username, id: decoded.id });
     } catch (err) {
-      console.error("Login error: Failed to decode token", err);
+      console.warn('Login: token saved but failed to decode token:', err?.message || err);
+      // Fall back to provided username if decode failed
+      setUser({ username: username || null, id: null });
     }
   };
 
