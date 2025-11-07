@@ -56,11 +56,8 @@ function App() {
     setVisualData(null);
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(`${SERVER_URL}/api/explain`,
-        { code },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      // Use the api instance which has interceptor that auto-attaches Authorization header
+      const response = await axios.post('/api/explain', { code });
       setOutputContent(response.data.explanation);
       setAudioUrl(response.data.audioUrl);
       setVisualData(response.data.visualData);
@@ -85,11 +82,10 @@ function App() {
     formData.append('codeFile', file);
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(`${SERVER_URL}/api/explain/upload`,
-        formData,
-        { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
-      );
+      // Use api instance with interceptor; set Content-Type for multipart
+      const response = await axios.post('/api/explain/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       setCode(response.data.code); // Set code from uploaded file
       setOutputContent(response.data.explanation);
       setAudioUrl(response.data.audioUrl);
@@ -109,11 +105,7 @@ function App() {
     setOutputType('refactor');
     setOutputContent('');
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(`${SERVER_URL}/api/explain/refactor`,
-        { code },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await axios.post('/api/explain/refactor', { code });
       setOutputContent(response.data.refactoredCode);
     } catch (err) {
       console.error('Error refactoring code:', err);
@@ -130,11 +122,7 @@ function App() {
     setOutputType('debug');
     setOutputContent('');
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(`${SERVER_URL}/api/explain/debug`,
-        { code },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await axios.post('/api/explain/debug', { code });
       setOutputContent(response.data.debugInfo);
     } catch (err) {
       console.error('Error debugging code:', err);

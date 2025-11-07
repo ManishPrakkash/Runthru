@@ -7,6 +7,14 @@ body {
   font-family: 'Poppins', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #000; /* Force black background */
+  color: #f8f9fa; /* Light text for contrast */
+}
+
+/* Ensure root fills viewport with dark background */
+#root {
+  min-height: 100vh;
+  background-color: #000;
 }
 
 code {
