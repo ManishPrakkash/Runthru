@@ -1,59 +1,60 @@
-import axios from 'axios';
+import api from './api'; // Use the shared api instance with interceptor
 
-const SERVER_URL = process.env.REACT_APP_SERVER_URL || 'http://localhost:5000';
-
-const getAuthHeaders = (token) => ({
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-});
-
-export const explainCode = async (code, token) => {
+// No need for manual token handling - the api interceptor auto-attaches Authorization header
+export const explainCode = async (code) => {
   try {
-    const response = await axios.post(`${SERVER_URL}/api/explain`, { code }, getAuthHeaders(token));
+    console.log('[explainService] Calling /api/explain');
+    const response = await api.post('/api/explain', { code });
+    console.log('[explainService] Explain response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Explain code service error:', error);
+    console.error('[explainService] Explain code error:', error?.response?.data || error.message);
     throw error;
   }
 };
 
-export const uploadCodeFile = async (file, token) => {
+export const uploadCodeFile = async (file) => {
   try {
+    console.log('[explainService] Uploading file:', file.name);
     const formData = new FormData();
     formData.append('codeFile', file);
-    const response = await axios.post(`${SERVER_URL}/api/explain/upload`, formData, {
+    const response = await api.post('/api/explain/upload', formData, {
       headers: {
-        ...getAuthHeaders(token).headers,
         'Content-Type': 'multipart/form-data',
       },
     });
+    console.log('[explainService] Upload response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Upload code file service error:', error);
+    console.error('[explainService] Upload code file error:', error?.response?.data || error.message);
     throw error;
   }
 };
 
-export const refactorCode = async (code, token) => {
+export const refactorCode = async (code) => {
   try {
-    const response = await axios.post(`${SERVER_URL}/api/explain/refactor`, { code }, getAuthHeaders(token));
+    console.log('[explainService] Calling /api/explain/refactor');
+    const response = await api.post('/api/explain/refactor', { code });
+    console.log('[explainService] Refactor response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Refactor code service error:', error);
+    console.error('[explainService] Refactor code error:', error?.response?.data || error.message);
     throw error;
   }
 };
 
-export const debugCode = async (code, token) => {
+export const debugCode = async (code) => {
   try {
-    const response = await axios.post(`${SERVER_URL}/api/explain/debug`, { code }, getAuthHeaders(token));
+    console.log('[explainService] Calling /api/explain/debug');
+    const response = await api.post('/api/explain/debug', { code });
+    console.log('[explainService] Debug response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Debug code service error:', error);
+    console.error('[explainService] Debug code error:', error?.response?.data || error.message);
     throw error;
   }
 };
+
 export const dryRunCode = async () => {
   const error = new Error('Dry Run feature is temporarily disabled.');
   error.status = 503;

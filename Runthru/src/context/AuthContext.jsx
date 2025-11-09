@@ -1,7 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
 // jwt-decode sometimes ships as CommonJS; to be compatible with Vite's
-// ESM handling, import the module as a wildcard and prefer its default if
-// present, otherwise fall back to the module itself.
 import * as jwtDecodeImport from 'jwt-decode';
 const jwtDecode = jwtDecodeImport.default || jwtDecodeImport;
 
@@ -28,7 +26,7 @@ export const AuthProvider = ({ children }) => {
       }
     }
   }, []);
-
+  
   // Login function
   const login = (token, username) => {
     // Always persist the token so API calls can use it. If decoding fails,

@@ -1,19 +1,14 @@
-import axios from 'axios';
+import api from './api'; // Use the shared api instance with interceptor
 
-const SERVER_URL = process.env.REACT_APP_SERVER_URL || 'http://localhost:5000';
-
-const getAuthHeaders = (token) => ({
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-});
-
-export const fetchUserHistory = async (token) => {
+// No need for manual token handling - the api interceptor auto-attaches Authorization header
+export const fetchUserHistory = async () => {
   try {
-    const response = await axios.get(`${SERVER_URL}/api/history`, getAuthHeaders(token));
+    console.log('[historyService] Fetching user history');
+    const response = await api.get('/api/history');
+    console.log('[historyService] History response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Fetch history service error:', error);
+    console.error('[historyService] Fetch history error:', error?.response?.data || error.message);
     throw error;
   }
 };
