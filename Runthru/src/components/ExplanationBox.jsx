@@ -19,11 +19,11 @@ const ExplanationBox = ({ explanation, loading, type = 'explanation' }) => {
       case 'debug':
         return 'Analyzing code for issues...';
       case 'refactor':
-        return 'Generating refactoring suggestions...';
+        return 'Analyzing code structure...';
       case 'dryrun':
-        return 'Generating step-by-step dry run...';
+        return 'Analyzing execution flow...';
       default:
-        return 'Generating explanation...';
+        return 'Analyzing your code...';
     }
   };
 

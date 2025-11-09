@@ -1,10 +1,8 @@
 import React, { useState, useContext } from 'react';
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { motion } from 'framer-motion';
-
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || (typeof process !== 'undefined' && process.env && process.env.REACT_APP_SERVER_URL) || 'http://localhost:5000';
+import * as authService from '../services/authService';
 
 const Auth = ({ type }) => {
   const [username, setUsername] = useState('');
@@ -19,36 +17,51 @@ const Auth = ({ type }) => {
     setLoading(true);
     setError('');
 
+    console.log(`🔐 [Auth.jsx] Starting ${type} flow for user: ${username}`);
+
     try {
-      const endpoint = type === 'login' ? '/api/auth/login' : '/api/auth/register';
-      console.log(`📤 Sending ${type} request to:`, `${SERVER_URL}${endpoint}`);
-      console.log('📝 Data:', { username, password: '****' });
+      let response;
       
-      const response = await axios.post(`${SERVER_URL}${endpoint}`, { username, password });
+      if (type === 'login') {
+        response = await authService.loginUser(username, password);
+      } else {
+        response = await authService.registerUser(username, password);
+      }
 
-      console.log('✅ Response received:', response.data);
+      console.log('✅ [Auth.jsx] Backend response received:', response);
 
-      if (response.data.token) {
-        // ✅ Save token to localStorage
-        localStorage.setItem('token', response.data.token);
+      if (response.token) {
+        console.log('🎫 [Auth.jsx] Token received, logging in user');
+        
+        // ✅ Save token to localStorage (redundant but safe)
+        localStorage.setItem('token', response.token);
 
-        // ✅ Call login from context
-        login(response.data.token, response.data.username);
+        // ✅ Call login from context to set user state
+        login(response.token, response.username);
 
+        console.log('✅ [Auth.jsx] User logged in, navigating to home');
+        
         // ✅ Navigate to home/dashboard
         navigate('/');
       } else {
-        setError(response.data.message || 'Authentication failed.');
+        console.warn('⚠️  [Auth.jsx] No token in response:', response);
+        setError(response.message || 'Authentication failed - no token received.');
       }
     } catch (err) {
-      console.error('❌ Auth error:', err);
-      console.error('Error details:', {
+      console.error('❌ [Auth.jsx] Auth error:', err);
+      console.error('❌ [Auth.jsx] Error details:', {
         message: err.message,
         status: err.response?.status,
         data: err.response?.data,
         statusText: err.response?.statusText
       });
-      setError(err.response?.data?.message || err.response?.data?.error || err.message || 'An error occurred. Please try again.');
+      
+      const errorMessage = err.response?.data?.message || 
+                          err.response?.data?.error || 
+                          err.message || 
+                          'An error occurred. Please try again.';
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

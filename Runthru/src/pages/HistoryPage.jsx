@@ -20,8 +20,7 @@ const HistoryPage = () => {
       }
 
       try {
-        const token = localStorage.getItem('token');
-        const data = await historyService.fetchUserHistory(token);
+        const data = await historyService.fetchUserHistory();
         setHistory(data);
       } catch (err) {
         console.error('Error fetching history:', err);
