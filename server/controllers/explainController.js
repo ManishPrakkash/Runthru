@@ -18,31 +18,29 @@ const getLanguageFromCode = (code) => {
   return 'JavaScript';
 };
 
-// 🚨 Check if auth middleware passed user
+// Optional auth - returns userId if logged in, null otherwise
 const getUserId = (req) => {
-  if (!req.user || !req.user.id) {
-    console.error('❌ No user attached to request. Check auth middleware.');
-    throw new Error('Unauthorized: Missing user info');
+  if (req.user && req.user.id) {
+    return req.user.id;
   }
-  return req.user.id;
+  return null; // Anonymous user
 };
 
 exports.explainCode = async (req, res) => {
   const { code } = req.body;
 
   console.log('📩 Incoming explain request');
-  console.log('🔐 Authorization Header:', req.headers.authorization);
+  console.log('🔐 Authorization Header:', req.headers.authorization || 'None (anonymous)');
 
   if (!code) {
     return res.status(400).json({ message: 'Code snippet is required.' });
   }
 
-  let userId;
-  try {
-    userId = getUserId(req);
+  const userId = getUserId(req);
+  if (userId) {
     console.log('✅ Authenticated User ID:', userId);
-  } catch (authErr) {
-    return res.status(401).json({ message: authErr.message });
+  } else {
+    console.log('👤 Anonymous request (no auth)');
   }
 
   try {
@@ -75,15 +73,21 @@ exports.explainCode = async (req, res) => {
       };
     }
 
-    const historyEntry = new History({
-      userId,
-      code,
-      language,
-      explanation,
-      audioUrl: audioUrl || null,
-      visualData: visualData || null
-    });
-    await historyEntry.save();
+    // Save to history only if user is logged in
+    if (userId) {
+      const historyEntry = new History({
+        userId,
+        code,
+        language,
+        explanation,
+        audioUrl: audioUrl || null,
+        visualData: visualData || null
+      });
+      await historyEntry.save();
+      console.log('💾 Saved to history for user:', userId);
+    } else {
+      console.log('⚠️ Skipping history save (anonymous user)');
+    }
 
     res.json({ explanation, audioUrl, visualData });
 
@@ -108,12 +112,11 @@ exports.explainCode = async (req, res) => {
 exports.uploadCode = async (req, res) => {
   console.log('📁 Uploading file:', req.file);
 
-  let userId;
-  try {
-    userId = getUserId(req);
+  const userId = getUserId(req);
+  if (userId) {
     console.log('✅ Authenticated User ID:', userId);
-  } catch (authErr) {
-    return res.status(401).json({ message: authErr.message });
+  } else {
+    console.log('👤 Anonymous upload (no auth)');
   }
 
   if (!req.file) {
@@ -153,15 +156,21 @@ exports.uploadCode = async (req, res) => {
       };
     }
 
-    const historyEntry = new History({
-      userId,
-      code,
-      language,
-      explanation,
-      audioUrl: audioUrl || null,
-      visualData: visualData || null
-    });
-    await historyEntry.save();
+    // Save to history only if user is logged in
+    if (userId) {
+      const historyEntry = new History({
+        userId,
+        code,
+        language,
+        explanation,
+        audioUrl: audioUrl || null,
+        visualData: visualData || null
+      });
+      await historyEntry.save();
+      console.log('💾 Saved to history for user:', userId);
+    } else {
+      console.log('⚠️ Skipping history save (anonymous user)');
+    }
 
     res.json({ code, explanation, audioUrl, visualData });
 
@@ -178,12 +187,8 @@ exports.uploadCode = async (req, res) => {
 exports.refactorCode = async (req, res) => {
   const { code } = req.body;
 
-  let userId;
-  try {
-    userId = getUserId(req);
-  } catch (authErr) {
-    return res.status(401).json({ message: authErr.message });
-  }
+  const userId = getUserId(req);
+  console.log(userId ? '✅ Authenticated refactor request' : '👤 Anonymous refactor request');
 
   if (!code) {
     return res.status(400).json({ message: 'Code snippet is required for refactoring.' });
@@ -203,12 +208,8 @@ exports.refactorCode = async (req, res) => {
 exports.debugCode = async (req, res) => {
   const { code } = req.body;
 
-  let userId;
-  try {
-    userId = getUserId(req);
-  } catch (authErr) {
-    return res.status(401).json({ message: authErr.message });
-  }
+  const userId = getUserId(req);
+  console.log(userId ? '✅ Authenticated debug request' : '👤 Anonymous debug request');
 
   if (!code) {
     return res.status(400).json({ message: 'Code snippet is required for debugging.' });
@@ -227,12 +228,8 @@ exports.debugCode = async (req, res) => {
 exports.dryRunCode = async (req, res) => {
   const { code } = req.body;
 
-  let userId;
-  try {
-    userId = getUserId(req);
-  } catch (authErr) {
-    return res.status(401).json({ message: authErr.message });
-  }
+  const userId = getUserId(req);
+  console.log(userId ? '✅ Authenticated dryrun request' : '👤 Anonymous dryrun request');
 
   if (!code) {
     return res.status(400).json({ message: 'Code snippet is required for dry run.' });
@@ -261,16 +258,21 @@ exports.dryRunCode = async (req, res) => {
       console.error('⚠️ TTS failed for dry run:', ttsError.message);
     }
 
-    // Save to history
-    const historyEntry = new History({
-      userId,
-      code,
-      language,
-      explanation: fullExplanation,
-      audioUrl: `/audio/${audioFileName}`,
-      visualData: dryRunData
-    });
-    await historyEntry.save();
+    // Save to history only if user is logged in
+    if (userId) {
+      const historyEntry = new History({
+        userId,
+        code,
+        language,
+        explanation: fullExplanation,
+        audioUrl: `/audio/${audioFileName}`,
+        visualData: dryRunData
+      });
+      await historyEntry.save();
+      console.log('💾 Saved dryrun to history for user:', userId);
+    } else {
+      console.log('⚠️ Skipping history save (anonymous user)');
+    }
 
     res.json({
       visualData: dryRunData,
