@@ -38,7 +38,7 @@ const UploadBox = ({ onFileUpload, disabled }) => {
         disabled={disabled}
         className="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {disabled ? 'Uploading...' : 'Upload File'}
+        {disabled ? 'Analyzing...' : 'Upload File'}
       </button>
       {fileName && <span className="text-gray-600 dark:text-gray-300 text-sm">{fileName}</span>}
     </div>
