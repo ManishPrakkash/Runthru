@@ -38,14 +38,13 @@ const HomePage = () => {
     setAudioUrl('');
     setVisualData(null);
     try {
-      const token = localStorage.getItem('token');
-      const response = await explainService.explainCode(code, token);
+      const response = await explainService.explainCode(code);
       setOutputContent(response.explanation);
       setAudioUrl(response.audioUrl);
       setVisualData(response.visualData);
     } catch (err) {
       console.error('Error explaining code:', err);
-      setError(err.message || 'Failed to explain code. Please try again.');
+      setError(err?.response?.data?.message || err.message || 'Failed to explain code. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -59,15 +58,14 @@ const HomePage = () => {
     setAudioUrl('');
     setVisualData(null);
     try {
-      const token = localStorage.getItem('token');
-      const response = await explainService.uploadCodeFile(file, token);
+      const response = await explainService.uploadCodeFile(file);
       setCode(response.code);
       setOutputContent(response.explanation);
       setAudioUrl(response.audioUrl);
       setVisualData(response.visualData);
     } catch (err) {
       console.error('Error uploading file:', err);
-      setError(err.message || 'Failed to upload file. Please try again.');
+      setError(err?.response?.data?.message || err.message || 'Failed to upload file. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -79,12 +77,11 @@ const HomePage = () => {
     setOutputType('refactor');
     setOutputContent('');
     try {
-      const token = localStorage.getItem('token');
-      const response = await explainService.refactorCode(code, token);
+      const response = await explainService.refactorCode(code);
       setOutputContent(response.refactoredCode);
     } catch (err) {
       console.error('Error refactoring code:', err);
-      setError(err.message || 'Failed to get refactoring suggestions.');
+      setError(err?.response?.data?.message || err.message || 'Failed to get refactoring suggestions.');
     } finally {
       setLoading(false);
     }
@@ -96,12 +93,11 @@ const HomePage = () => {
     setOutputType('debug');
     setOutputContent('');
     try {
-      const token = localStorage.getItem('token');
-      const response = await explainService.debugCode(code, token);
+      const response = await explainService.debugCode(code);
       setOutputContent(response.debugInfo);
     } catch (err) {
       console.error('Error debugging code:', err);
-      setError(err.message || 'Failed to get debugging assistance.');
+      setError(err?.response?.data?.message || err.message || 'Failed to get debugging assistance.');
     } finally {
       setLoading(false);
     }
@@ -132,7 +128,7 @@ const HomePage = () => {
                 disabled={loading || !code.trim()}
                 className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Explaining...' : 'Explain Code'}
+                {loading ? 'Analyzing...' : 'Explain Code'}
               </button>
               <UploadBox onFileUpload={handleFileUpload} disabled={loading} />
               <button
@@ -140,14 +136,14 @@ const HomePage = () => {
                 disabled={loading || !code.trim()}
                 className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Refactoring...' : 'Refactor Code'}
+                {loading ? 'Analyzing...' : 'Refactor Code'}
               </button>
               <button
                 onClick={handleDebugCode}
                 disabled={loading || !code.trim()}
                 className="px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Debugging...' : 'Debug Code'}
+                {loading ? 'Analyzing...' : 'Debug Code'}
               </button>
               {/* Dry Run button should always be visible. If not, check CSS or parent container size. */}
               {/* Dry Run button temporarily removed */}
