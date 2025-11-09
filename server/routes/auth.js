@@ -12,4 +12,7 @@ router.post('/register', authController.register);
 // @access  Public
 router.post('/login', authController.login);
 
+// Dev-only user listing for debugging auth issues
+router.get('/users', authController.listUsers);
+
 module.exports = router;

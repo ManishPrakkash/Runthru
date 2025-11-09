@@ -55,7 +55,7 @@ async function retryWithBackoff(fn, context = '') {
 exports.getExplanation = async (code, language) => {
   try {
     return await retryWithBackoff(async () => {
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
       const prompt = `
 You are a helpful AI that explains code to beginners in a simple way.
@@ -83,7 +83,7 @@ ${code}
 exports.getRefactoringSuggestions = async (code, language) => {
   try {
     return await retryWithBackoff(async () => {
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
       const prompt = `
 You are a competitive programming expert.
@@ -138,7 +138,7 @@ Could not generate AI refactoring suggestions at this moment. Please try again l
 exports.getDebuggingAssistance = async (code, language) => {
   try {
     return await retryWithBackoff(async () => {
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
       const prompt = `
 You're a helpful AI coding teacher and debugger.
@@ -184,7 +184,7 @@ Could not generate AI debugging assistance at this moment. Please try again late
 exports.generateDryRunSteps = async (code, language) => {
   try {
     return await retryWithBackoff(async () => {
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
       const prompt = `
 You are an expert programming instructor specializing in algorithm visualization. Analyze the following ${language} code and create a detailed step-by-step dry run visualization.
