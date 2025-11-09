@@ -1,1 +1,0 @@
-// TODO: Custom hook for authentication
