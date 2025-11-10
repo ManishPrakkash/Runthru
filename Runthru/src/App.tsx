@@ -455,7 +455,7 @@ const App = () => {
         </div>
         <nav className="flex items-center space-x-4 text-sm">
           <a href="#" className="hover:text-white transition-colors">My History</a>
-          <span>Welcome, User</span>
+          <span>Welcome, manish</span>
           <button 
             onClick={handleLogout}
             className="flex items-center space-x-2 px-3 py-1 border border-matrix-green/50 rounded-md hover:bg-matrix-green/10 hover:border-matrix-green transition-colors">
@@ -527,7 +527,7 @@ const App = () => {
             {isLoading && (
               <div className="flex flex-col items-center space-y-2">
                   <SyncIcon className="w-8 h-8 animate-spin" />
-                  <span>Processing with Gemini...</span>
+                  <span>Running Thru..</span>
               </div>
             )}
             {error && <p className="text-red-400">{error}</p>}
