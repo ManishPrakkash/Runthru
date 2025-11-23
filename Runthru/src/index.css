@@ -77,3 +77,13 @@ code {
     background: rgba(31, 41, 55, 0.5); /* dark-gray-800 with transparency */
     border: 1px solid rgba(75, 85, 99, 0.2); /* dark-gray-600 with transparency */
 }
+
+/* Remove blinking cursor from input fields */
+input {
+    caret-color: transparent;
+}
+
+/* Show cursor on focus for better UX */
+input:focus {
+    caret-color: auto;
+}
