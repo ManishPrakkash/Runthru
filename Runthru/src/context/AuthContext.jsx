@@ -1,7 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-// jwt-decode sometimes ships as CommonJS; to be compatible with Vite's
-import * as jwtDecodeImport from 'jwt-decode';
-const jwtDecode = jwtDecodeImport.default || jwtDecodeImport;
+import { jwtDecode } from 'jwt-decode';
 
 export const AuthContext = createContext();
 
